@@ -8,6 +8,19 @@
 - [OWASP Top 10 大規模言語モデルアプリケーション](Document/README.md)
 -->
 
+## OWASP Top 10 大規模言語モデルアプリケーション 2026 日本語版
+
+- [LLM01:2026 プロンプトインジェクション (Prompt Injection)](Document/2026/final/LLM01_PromptInjection.md)
+- [LLM02:2026 機密情報の開示 (Sensitive Information Disclosure)](Document/2026/final/LLM02_SensitiveInformationDisclosure.md)
+- [LLM03:2026 過剰なエージェンシー (Excessive Agency)](Document/2026/final/LLM03_ExcessiveAgency.md)
+- [LLM04:2026 サプライチェーン (Supply Chain)](Document/2026/final/LLM04_SupplyChain.md)
+- [LLM05:2026 データおよびモデルポイズニング (Data and Model Poisoning)](Document/2026/final/LLM05_DataModelPoisoning.md)
+- [LLM06:2026 無制限の消費 (Unbounded Consumption)](Document/2026/final/LLM06_UnboundedConsumption.md)
+- [LLM07:2026 誤情報 (Misinformation)](Document/2026/final/LLM07_Misinformation.md)
+- [LLM08:2026 隠しコンテキストの露出 (Hidden Context Exposure)](Document/2026/final/LLM08_HiddenContextExposure.md)
+- [LLM09:2026 ベクトルとエンベディングの脆弱性 (Vector and Embedding Weaknesses)](Document/2026/final/LLM09_VectorAndEmbeddingWeaknesses.md)
+- [LLM10:2026 不適切な出力処理 (Improper Output Handling)](Document/2026/final/LLM10_ImproperOutputHandling.md)
+
 ## OWASP Top 10 大規模言語モデルアプリケーション 2025 日本語版
 
 - [LLM01:2025 プロンプトインジェクション (Prompt Injection)](Document/2025/LLM01_PromptInjection.md)
