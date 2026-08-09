@@ -1,6 +1,6 @@
-## LLM07:2026 Misinformation
+## LLM07:2026 誤情報 (Misinformation)
 
-### Description
+### 説明
 
 Misinformation occurs when an LLM or LLM-enabled application produces incorrect, incomplete, unsupported, or misleading information that appears credible enough to influence a human decision, an automated workflow, or an agent action. The core risk is that the incorrect output is trusted and acted upon.
 
@@ -12,7 +12,7 @@ Misinformation can arise from hallucination, incomplete or stale context, weak g
 
 Overreliance remains a key factor. Humans and systems often treat fluent, confident, or well-structured outputs as authoritative. In agentic architectures, this overreliance is frequently embedded in system design.
 
-### Common Examples of Risk
+### リスクのよくある例
 
 1. Unsupported or False Decision Support: Incorrect or unsupported information influences business, legal, healthcare, financial, or operational decisions.
 2. Incorrect State Inference in Workflows: An LLM infers that a condition has been met when it has not, triggering unintended actions.
@@ -22,7 +22,7 @@ Overreliance remains a key factor. Humans and systems often treat fluent, confid
 6. Cross-Agent Misinformation Propagation: Incorrect outputs propagate across agents and workflows.
 7. Forged or Misattributed Evidence: Fabricated or manipulated content is presented as authoritative evidence.
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 1. Ground Claims Before Action: Require outputs to be grounded in authoritative and current sources.
 2. Implement Claim-Check-Act Patterns: Separate generation from execution and verify claims before acting.
@@ -35,32 +35,32 @@ Overreliance remains a key factor. Humans and systems often treat fluent, confid
 9. Calibrate Human and System Trust: Distinguish verified facts from assumptions.
 10. Adversarial Evaluation and Continuous Testing: Regularly test workflows against misleading scenarios.
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1: Hallucinated Dependency Recommendation
+#### シナリオ #1: Hallucinated Dependency Recommendation
 
 A coding assistant recommends a plausible but non-existent package, which an attacker has pre-registered under the hallucinated name, so a developer who trusts the suggestion installs attacker-controlled code (Spracklen et al., 2025).
 
-#### Scenario #2: Incorrect Policy Decision by Agent
+#### シナリオ #2: Incorrect Policy Decision by Agent
 
 A customer-service agent misreads a policy and approves a refund that violates the terms, resulting in financial loss.
 
-#### Scenario #3: Omission in Safety-Critical Summary
+#### シナリオ #3: Omission in Safety-Critical Summary
 
 A clinical summary omits a drug contraindication, and a clinician acts on the incomplete recommendation.
 
-#### Scenario #4: Adversarially Induced False Reasoning
+#### シナリオ #4: Adversarially Induced False Reasoning
 
 An attacker seeds a support forum with false remediation steps that a troubleshooting agent retrieves and repeats as a trusted recommendation.
 
-#### Scenario #5: False Alert Triggers Automated Response
+#### シナリオ #5: False Alert Triggers Automated Response
 
 A security agent misclassifies normal traffic as an intrusion and automatically blocks a production network segment, causing an outage.
 
-#### Scenario #6: Cross-Agent Trust Failure
+#### シナリオ #6: Cross-Agent Trust Failure
 
 A retrieval agent reports a customer as identity-verified when it is not, and a downstream payment agent trusts that state and releases funds.
 
-#### Scenario #7: Fabricated Task Completion
+#### シナリオ #7: Fabricated Task Completion
 
 An agent reports that a nightly database backup completed when it never ran, and a later restore fails because no backup exists.

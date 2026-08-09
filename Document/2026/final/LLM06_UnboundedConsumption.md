@@ -1,6 +1,6 @@
-## LLM06:2026 Unbounded Consumption
+## LLM06:2026 無制限の消費 (Unbounded Consumption)
 
-### Description
+### 説明
 
 Unbounded Consumption occurs when an LLM application allows excessive and uncontrolled inferences, enabling attackers to disrupt service availability, inflict unsustainable financial costs, or steal intellectual property through model cloning, all by exploiting a common class of vulnerability: the absence of adequate controls over how resources are consumed.
 
@@ -8,7 +8,7 @@ The high computational demands of LLMs, particularly in cloud and pay-per-token 
 
 This risk is compounded by the growing adoption of extended-thinking and reasoning models with large or insufficiently constrained output budgets, multimodal models that substantially increase per-request compute costs, agentic architectures and tool-use protocols (such as MCP) that amplify a single request into cascading downstream operations, and shared inference infrastructure that introduces new supply-chain attack surfaces. Traditional request-rate limiting alone is no longer sufficient. Effective defense demands token-aware cost controls, hard spending caps, agent-level circuit breakers, and continuous cost-attribution monitoring.
 
-### Common Examples of Risk
+### リスクのよくある例
 
 #### 1. Variable-Length Input Flood and Output Explosion
 
@@ -46,7 +46,7 @@ Attackers can publish tools that overuse LLM resources by forcing an LLM-based a
 
 Attackers target vulnerabilities in LLM serving frameworks (vLLM, TensorRT-LLM, SGLang, Triton, Ollama) to crash services or exhaust model resources through unsafe deserialization flaws, special-token injection, and injected chat templates.
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 #### 1. Rate Limiting & Input Size Validation
 
@@ -88,36 +88,36 @@ Enforce step limits, recursion depth limits, time limits, and per-run cost ceili
 
 Keep serving frameworks updated. Disable unsafe deserialization, restrict special-token passthrough, and enforce authentication on all inference endpoints.
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1: Uncontrolled Input Size
+#### シナリオ #1: Uncontrolled Input Size
 
 An attacker submits an unusually large input to an LLM application that processes text data, resulting in excessive memory usage and CPU load, potentially crashing the system or significantly slowing down the service.
 
-#### Scenario #2: Repeated Requests
+#### シナリオ #2: Repeated Requests
 
 An attacker transmits a high volume of requests to the LLM API, causing excessive consumption of computational resources and making the service unavailable to legitimate users.
 
-#### Scenario #3: Resource-Intensive Queries
+#### シナリオ #3: Resource-Intensive Queries
 
 An attacker crafts specific inputs designed to trigger the LLM's most computationally expensive processes, leading to prolonged GPU usage and potential system failure.
 
-#### Scenario #4: Denial of Wallet (DoW)
+#### シナリオ #4: Denial of Wallet (DoW)
 
 An attacker generates excessive operations to exploit the pay-per-use model of cloud-based AI services, causing unsustainable costs for the service provider.
 
-#### Scenario #5: Functional Model Replication
+#### シナリオ #5: Functional Model Replication
 
 An attacker uses the LLM's API to generate synthetic training data and fine-tunes another model, creating a functional equivalent and bypassing traditional model extraction limitations.
 
-#### Scenario #6: Perturbations in LVLM Image Input
+#### シナリオ #6: Perturbations in LVLM Image Input
 
 An attacker crafts adversarial image inputs that include perturbations optimized to cause an LVLM to overconsume tokens in its output (Gao et al., 2025).
 
-#### Scenario #7: Multi-turn Tool Calling Loops and Tool Call Fan-Out
+#### シナリオ #7: Multi-turn Tool Calling Loops and Tool Call Fan-Out
 
 The attacker can publish a malicious tool (e.g. via a Claude Skill on an open-source repository) that instructs an agent to perform recursive cyclical tasks, or tasks that require a large number of tool calls. Developers incorporating that tool into their agents then risk causing excessive token consumption and service instability.
 
-#### Scenario #8: Growing LLM Context in Agentic Sessions
+#### シナリオ #8: Growing LLM Context in Agentic Sessions
 
 An attacker or a benign user maintains an open agentic session, gradually injecting content so that each inference re-processes the full accumulated context. Per-turn cost climbs as the context grows, from roughly $0.001 on the first turn to about $0.50 by turn 100. No single request triggers rate limits because each stays individually within budget, yet the aggregate across many concurrent or long-lived sessions reaches hundreds of dollars.

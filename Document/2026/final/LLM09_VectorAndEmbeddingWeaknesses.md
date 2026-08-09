@@ -1,6 +1,6 @@
-## LLM09:2026 Vector and Embedding Weaknesses
+## LLM09:2026 ベクトルとエンベディングの脆弱性 (Vector and Embedding Weaknesses)
 
-### Description
+### 説明
 
 Vector and embedding weaknesses present security risks in any LLM application that converts text, images, code, or audio into numerical representations and uses similarity search to decide what the model sees. Retrieval-Augmented Generation (RAG) is the most familiar case, but the same machinery underlies vector-backed agent memory, semantic caches, and deduplication pipelines. Whenever similarity search sits between a data source and the prompt, the embedding layer becomes part of the application's trust boundary.
 
@@ -8,7 +8,7 @@ These weaknesses are distinct from prompt injection. They exploit the geometry o
 
 This entry covers attacks that depend on the embedding layer to succeed. Indirect prompt injection through retrieved content is covered in LLM01:2026 Prompt Injection, training-time poisoning of the embedding model in LLM05:2026 Data and Model Poisoning, serialization flaws in vector-store libraries in LLM04:2026 Supply Chain, and agent-memory attacks that do not rely on embedding geometry in ASI06:2026 Memory and Context Poisoning (OWASP Top 10 for Agentic Applications). Vectorless retrieval systems (BM25-only, LLM-native tree navigation) inherit the non-geometric risks but have no LLM09 attack surface.
 
-### Common Examples of Risk
+### リスクのよくある例
 
 #### 1. Cross-Tenant Leakage via Shared Similarity Search
 
@@ -38,7 +38,7 @@ Semantic caches and near-duplicate detection use a cosine-similarity threshold t
 
 Cross-modal encoders such as CLIP and ColPali map images, audio, code, and text into one vector space. An attacker who can contribute non-text content can craft an image whose embedding sits close to a sensitive text query. When a user submits that query, the image is retrieved as trusted context. MM-PoisonRAG (Ha et al., 2025) and Poisoned-MRAG (Liu et al., 2025) demonstrate local and global poisoning across multimodal RAG pipelines. "One Pic is All it Takes" shows a single image suffices for targeted and universal VD-RAG poisoning. To a human reviewer the image appears unremarkable, and text-based content scanning does not catch it because the payload is not text.
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 #### 1. Permission and Access Control
 
@@ -64,16 +64,16 @@ Delete embeddings within a bounded time when the source document is deleted, and
 
 Keep immutable logs of retrieval activity (tenant scope, query, returned IDs, similarity scores). Monitor for tenant-filter bypass attempts, cross-tenant retrieval anomalies, and abnormal embedding-API consumption. Update incident-response playbooks so "embeddings only" leaks are treated as source-data leaks for breach assessment and notification under GDPR Article 33 and analogous regimes.
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1: Embedding Similarity Attack on a Public Ingestion Pipeline
+#### シナリオ #1: Embedding Similarity Attack on a Public Ingestion Pipeline
 
 A company's RAG system scrapes public documentation and forum posts on a schedule. An attacker publishes posts engineered so their embeddings land near specific internal queries, such as "what is our Q3 revenue projection." When an employee asks that question, the attacker's content is retrieved and fed to the LLM. The same text pasted into a chat would have no effect. The attack works only because the attacker can place content near a target query in embedding space.
 
-#### Scenario #2: Cross-Tenant Inference in a Shared Vector Index
+#### シナリオ #2: Cross-Tenant Inference in a Shared Vector Index
 
 A multi-tenant SaaS product uses one shared vector index with tenant filtering at the application layer. Tenant A submits probing queries. Similarity search runs across every embedding, including Tenant B's, before the filter is applied. A never sees B's documents, but timing differences, result counts, and score-distribution gaps reveal the existence and approximate topic of B's content. Over many queries, A builds a useful map of B's data. Real-world incidents in this category include CVE-2025-69286 (RAGFlow), where predictable token generation enabled cross-account compromise in a widely deployed open-source RAG engine.
 
-#### Scenario #3: Embedding Inversion from a Leaked Vector Store
+#### シナリオ #3: Embedding Inversion from a Leaked Vector Store
 
 A cloud misconfiguration exposes a backup of a production vector database. The underlying documents, customer conversation logs containing PII, are encrypted separately and not exposed, so the incident is initially classified as low-severity: "only the embeddings leaked." The attacker runs a zero-shot inversion attack against the stolen embeddings and reconstructs a substantial fraction of the source content, including PII, without access to the original encoder. The incident is reclassified as equivalent to a source-document breach and notification obligations are reassessed. "Embeddings only" is not a safe-harbor classification.

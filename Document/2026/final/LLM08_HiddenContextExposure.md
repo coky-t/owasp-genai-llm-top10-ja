@@ -1,6 +1,6 @@
-## LLM08:2026 Hidden Context Exposure
+## LLM08:2026 隠しコンテキストの露出 (Hidden Context Exposure)
 
-### Description
+### 説明
 
 Hidden Context Exposure is the unauthorized extraction, inference, or reconstruction of hidden, non-user-facing system instructions or operational context placed in a model's context. It becomes security-relevant when that hidden context contains or reveals secrets, policy logic, tools, trust boundaries, workflow criteria, proprietary behavior, or other sensitive implementation details that materially increase attacker capability.
 
@@ -23,7 +23,7 @@ In summary, LLM08 covers the foundational risk that hidden LLM control context i
 * The agentic amplifications of this risk, e.g., persistent memory, inter-agent channels, tool configuration persistence, and multi-step agent compromise (the OWASP Top 10 for Agentic Applications).
 * Generic application-security concerns inherited by LLM-integrated systems, e.g., server-side log leakage, client-side bundle inspection, and infrastructure-layer side channels.
 
-### Common Examples of Risk
+### リスクのよくある例
 
 #### 1. Exposure of Sensitive Functionality, Tool and Function Schemas
 
@@ -45,7 +45,7 @@ Instruction context could include directives or information related to authoriza
 
 System prompts frequently define how responses should be structured, including required formats such as JSON schemas, templates, or validation constraints. When these instructions are exposed, attackers gain insight into how outputs are constructed and what assumptions downstream systems rely on. This knowledge can be used to generate responses that conform to expected formats while embedding unintended or manipulated values, potentially leading to incorrect parsing or unintended system behavior.
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 #### 1. Do Not Put Sensitive Data in Hidden Context
 
@@ -59,16 +59,16 @@ Because LLMs can be vulnerable to attacks such as prompt injection, hidden conte
 
 Critical controls such as privilege separation, authorization bounds checks, and similar must not be delegated to the LLM, whether through the system prompt or another mechanism. These controls should be enforced in a deterministic and auditable manner, which LLMs are not well suited to provide. Where tasks require different levels of access, separate them by authorization context and grant each only the privileges it requires.
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1: Credential Leakage via System Prompt
+#### シナリオ #1: Credential Leakage via System Prompt
 
 An LLM has a system prompt that contains a set of credentials used for a tool that it has been given access to. The system prompt is leaked to an attacker, who is then able to use these credentials for other purposes.
 
-#### Scenario #2: Tool Schema via Context Extraction
+#### シナリオ #2: Tool Schema via Context Extraction
 
 An attacker extracts the hidden context that contains the tool list and parameter schemas through conversational probing and uses the information to craft inputs that steer the application toward specific tool calls. No credential is disclosed and no policy is overtly bypassed, but the attacker now has concrete targets for subsequent prompt injection attempts and reconnaissance for downstream action chaining.
 
-#### Scenario #3 Bypassing Restrictions via Guardrail Disclosures
+#### シナリオ #3 Bypassing Restrictions via Guardrail Disclosures
 
 An LLM has a system prompt prohibiting the generation of offensive content, external links, and code execution. An attacker extracts this system prompt and uses the disclosed restrictions to craft a prompt injection attack that bypasses them.

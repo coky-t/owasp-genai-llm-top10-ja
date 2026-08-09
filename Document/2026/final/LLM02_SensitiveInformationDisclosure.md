@@ -1,6 +1,6 @@
-## LLM02:2026 Sensitive Information Disclosure
+## LLM02:2026 機密情報の開示 (Sensitive Information Disclosure)
 
-### Description
+### 説明
 
 Sensitive information disclosure occurs when an LLM-integrated system exposes confidential, regulated, privileged, or proprietary data through a channel the data subject, controller, or system owner did not authorize. The channel is not only the final answer: tool-call arguments, reasoning traces, retrieved chunks, multimodal output, logs, telemetry, embeddings, and observable inference properties (timing, token length, log-probabilities, confidence, cache-hit behavior) are all disclosure surfaces. Treat each as an output subject to the same classification and redaction rules.
 
@@ -15,7 +15,7 @@ Protected information includes PII, PHI, financial data, credentials, API keys, 
 
 Severity should turn on what the recipient can learn, not on whether the leak looked like natural language. Applicable regimes include the EU AI Act (Regulation (EU) 2024/1689, high-risk obligations from August 2026), GDPR, HIPAA, CCPA/CPRA, ISO/IEC 42001, and NIST AI 600-1. This entry covers the LLM as an application *component*. Where it acts as an autonomous actor (cross-session memory, tool choice, multi-step exfiltration), amplified risk is owned by ASI, with deeper controls in DSGAI.
 
-### Common Examples of Risk
+### リスクのよくある例
 
 1. **Training-data memorization and extraction.** The November 2023 "poem" divergence attack drove `gpt-3.5-turbo` to emit more than 10,000 unique memorized examples for roughly USD 200 (Nasr et al., 2023). Vendor patches have been bypassed repeatedly. Fine-tuned models and their LoRA adapters are more extractable than base models of the same scale, a targeted extraction surface distinct from the base model. Litigation exhibits in NYT v. OpenAI and Getty v. Stability AI include examples of verbatim reproduction, with the Getty case centered on watermark reproduction.
 
@@ -31,11 +31,11 @@ Severity should turn on what the recipient can learn, not on whether the leak lo
 
 7. **Platform and ecosystem disclosure.** Observability platforms (Langfuse, LangSmith, Datadog LLM Observability) log full prompts, completions, chunks, and traces by default. Two representative incidents: DeepSeek's January 2025 ClickHouse exposure of more than one million rows of logs and API keys (Wiz, 2025), and Check Point's 2026 disclosure of ChatGPT exfiltration through a hidden outbound channel in the code-execution runtime, where one crafted prompt turned the runtime into a silent DNS channel while the visible answer stayed benign (Check Point Research, 2026).
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 Mitigations follow the DSGAI tiered structure for a graduated implementation path.
 
-#### Tier 1: Foundational (every deployment)
+#### 第 1 層: 基礎 (すべてのデプロイメント)
 
 1. Govern corpora: provenance, classification, and deduplication across near-duplicates, transliterations, and format variants. Scrub PII at ingest. Deduplication reduces but does not eliminate memorization.
 2. Minimize context: send only task-required fields to external providers. Disable auto-context (`customer_360`, full-record append) unless justified per template.
@@ -45,7 +45,7 @@ Mitigations follow the DSGAI tiered structure for a graduated implementation pat
 6. Budget queries per user and per session on sensitive endpoints to disrupt enumeration and membership probing.
 7. Operational hygiene: restrict and scrub logs and traces before APM ingestion, encrypt in transit and at rest, and technically enforce no-train/no-retain rather than policy text alone.
 
-#### Tier 2: Hardening (regulated / high-sensitivity)
+#### 第 2 層: 強化 (規制対象 / 高機密)
 
 8. DP-SGD calibrated to sensitivity and cardinality with overfitting monitored as a memorization proxy. Pair with detection, because fixed budgets degrade under adaptive querying.
 9. Vector-store protection: encryption, ACLs separate from document ACLs, restricted export APIs, minimum-scope k-NN, and embedding-space probing detection.
@@ -55,7 +55,7 @@ Mitigations follow the DSGAI tiered structure for a graduated implementation pat
 13. Format-preserving encryption for structured identifiers, with strict internal-versus-external routing separation and field allowlists on the external path.
 14. AI-aware audit logging into SIEM, continuous DLP and AI-SPM, and a documented domain inventory with an enforced join policy so individually-permitted sources cannot combine into prohibited conclusions.
 
-#### Tier 3: Advanced (regulated, classified, high-target)
+#### 第 3 層: 高度 (規制対象、機密指定、高標的性)
 
 15. Confidential computing (Intel TDX, AMD SEV-SNP, AWS Nitro Enclaves) or emerging privacy-preserving inference (the AloePri covariant-obfuscation framework, Lin et al., 2026) where the threat model justifies the utility and latency cost.
 16. Verifiable erasure across raw data, embeddings, checkpoints, and adapters, validated by post-unlearning extraction and membership-inference probes.
@@ -63,44 +63,44 @@ Mitigations follow the DSGAI tiered structure for a graduated implementation pat
 18. Audit synthetic data against extractors. Resist distillation with probing detection, rate limits, and watermarking. Budget aggregate analytics.
 19. Exercise a disclosure incident-response playbook: scope by data class and affected subject or session, then assess and meet applicable breach and serious-incident notification obligations across relevant regimes (for example GDPR, HIPAA, and EU AI Act Article 73). Follow with unlearning, retraining, or withdrawal, vector and cache cleanup, vendor notice, and a persistent-memory audit.
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1
+#### シナリオ #1
 
 Divergence prompts make a production model emit memorized PII, URLs, and live credentials at scale, triggering GDPR Article 33 notification.
 
-#### Scenario #2
+#### シナリオ #2
 
 A shared-inference-state defect leaks one user's medical-letter prompt into another user's reasoning trace. HIPAA 60-day notification applies.
 
-#### Scenario #3
+#### シナリオ #3
 
 Extended-thinking traces logged verbatim to a shared APM project expose retrieved PII to hundreds of engineers while the answer stays sanitized.
 
-#### Scenario #4
+#### シナリオ #4
 
 Prompt injection makes a support bot print its system prompt and an embedded vendor API key.
 
-#### Scenario #5
+#### シナリオ #5
 
 A shared legal RAG index crosses firm boundaries, synthesizing one client's privileged strategy into another's answer, an attorney-client waiver event.
 
-#### Scenario #6
+#### シナリオ #6
 
 A leaked "embeddings-only" vector backup is reclassified as a source-document breach after inversion, restarting the 72-hour clock.
 
-#### Scenario #7
+#### シナリオ #7
 
 Whisper Leak topic inference on encrypted streaming identifies users querying medical, legal, or political topics without decryption.
 
-#### Scenario #8
+#### シナリオ #8
 
 Membership inference against a clinical fine-tune identifies training-set patients at high AUC without extracting any record, a HIPAA-reportable determination.
 
-#### Scenario #9
+#### シナリオ #9
 
 A model summarizes PII hidden beneath a black-rectangle PDF redaction layer rendered over unmodified text.
 
-#### Scenario #10
+#### シナリオ #10
 
 An injected "diagnostic check" makes a code runtime encode spreadsheet content into DNS queries while the visible statistical summary stays benign.

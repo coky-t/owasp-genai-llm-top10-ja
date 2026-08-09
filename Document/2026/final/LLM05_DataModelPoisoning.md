@@ -1,6 +1,6 @@
-## LLM05:2026 Data and Model Poisoning
+## LLM05:2026 データおよびモデルポイズニング (Data and Model Poisoning)
 
-### Description
+### 説明
 
 Data and Model Poisoning describes a class of attacks and failures where an adversary (or unsafe process) manipulates data or model artifacts to embed harmful behavior, bias, or exploitable weaknesses into an AI system. In modern GenAI environments, poisoning is not limited to "training data" in the traditional sense. It can occur anywhere data is ingested, transformed, retrieved, or reused, including during pre-training, fine-tuning, embedding creation, retrieval augmentation (RAG), and model distribution. The result is an AI system that may still appear functional but behaves in ways that undermine trust, safety, and security.
 
@@ -24,7 +24,7 @@ This entry covers durable corruption of persistent data or model behavior. Promp
 
 ---
 
-### Common Examples of Risk
+### リスクのよくある例
 
 1. **Training and Fine-Tuning Data Poisoning:** Attackers inject biased or malicious content into datasets. A targeted variant deliberately erodes refusal behaviors while preserving general accuracy, making degradation undetectable through standard evaluation.
 
@@ -46,7 +46,7 @@ This entry covers durable corruption of persistent data or model behavior. Promp
 
 ---
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 1. Track dataset and model lineage using SBOM/ML-BOM (e.g., CycloneDX), enforce signing and verification, and continuously validate data integrity across lifecycle stages.
 
@@ -74,40 +74,40 @@ This entry covers durable corruption of persistent data or model behavior. Promp
 
 ---
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1
+#### シナリオ #1
 
 An attacker inserts manipulated documents into an internal knowledge repository. Poisoned documents surface in responses, leading to incorrect recommendations, manipulated business decisions, or reputational damage.
 
-#### Scenario #2
+#### シナリオ #2
 
 An attacker embeds hidden instructions in webpages summarized by AI tools. When ingested into RAG or memory systems, the instructions bias the model to recommend specific products, enabling financial manipulation and loss of trust in AI outputs.
 
-#### Scenario #3
+#### シナリオ #3
 
 An attacker submits crafted inputs into an automated retraining feedback loop. No infrastructure access is required, only standard user-interface access. The result is slow model drift toward degraded accuracy, biased outputs, or unsafe recommendations.
 
-#### Scenario #4
+#### シナリオ #4
 
 A malicious insider injects mislabeled transaction data into a training dataset. The model fails to detect fraud, resulting in financial losses, compliance violations, and regulatory breach.
 
-#### Scenario #5
+#### シナリオ #5
 
 An attacker uploads poisoned pre-trained weights to a public repository. Standard safety training fails to remove embedded backdoors (Hubinger et al., 2024). Organizations face system compromise, data leakage, or targeted manipulation at scale.
 
-#### Scenario #6
+#### シナリオ #6
 
 An attacker modifies a model's chat template (for example in a GGUF package or tokenizer config) with trigger-activated conditional instructions. Redistributed via a public hub, the model behaves normally under benign inputs. Validated across 18 models and 4 inference runtimes: factual accuracy drops from 90% to 15% under trigger conditions, and URL emission exceeds an 80% success rate (Fogel et al., 2026).
 
-#### Scenario #7
+#### シナリオ #7
 
 A developer loads a third-party model using unsafe serialization (e.g., pickle). Embedded malicious code executes during loading, enabling host compromise, lateral movement, and infrastructure breach.
 
-#### Scenario #8
+#### シナリオ #8
 
 In a shared AI environment, one tenant injects adversarial data into shared embeddings or memory layers, influencing other tenants' responses and causing cross-tenant contamination and privacy risk.
 
-#### Scenario #9
+#### シナリオ #9
 
 An attacker injects malicious instructions into an AI agent's persistent memory over multiple sessions. The agent begins prioritizing attacker-controlled logic, resulting in long-term workflow manipulation and hidden persistence.

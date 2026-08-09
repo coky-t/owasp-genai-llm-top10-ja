@@ -1,6 +1,6 @@
-## LLM01:2026 Prompt Injection
+## LLM01:2026 プロンプトインジェクション (Prompt Injection)
 
-### Description
+### 説明
 
 A **prompt-injection vulnerability** occurs when input to a large language model (LLM), whether direct user input, retrieved content, tool output, image, audio, or video content, intermediate reasoning, or persistent memory, alters the model's behavior in ways the application developer did not intend. LLMs make no architectural distinction between "instructions" and "data" (both are tokens on the same stream), so there is no clean equivalent to parameterized queries (NCSC, 2025). Inputs need not be human-readable, need not arrive directly from a user, and need not be visible in the rendered interface to influence the model.
 
@@ -20,15 +20,15 @@ The severity and nature of a successful prompt injection vary with the business 
 
 ---
 
-### Types of Prompt Injection
+### プロンプトインジェクションの種類
 
-#### Direct Prompt Injection
+#### 直接プロンプトインジェクション
 
 A user, or an attacker with the user's access path, supplies input that changes model behavior in undesired ways. Direct injection can be **intentional** (a malicious user crafting a jailbreak) or **unintentional** (a legitimate user pasting content that happens to contain conflicting instructions, or a user who relies on an LLM to help them and inadvertently optimizes their input against an unrelated downstream LLM, as in Scenario #3).
 
 Jailbreaking is the subset of prompt injection where the attacker's goal is to make the model violate its safety protocols. Application-level safeguards help contain it, but effective prevention requires ongoing updates to the model's training and safety mechanisms.
 
-#### Indirect Prompt Injection
+#### 間接プロンプトインジェクション
 
 The model ingests content from an external source (a web page, a document, an email, a tool response, a retrieved RAG passage, an image, an MCP server's output, a database row, or an issue title) that contains data which acts as prompt injection. The user did not supply or see those instructions. The trust profile of the delivery surface determines what defenses are practical:
 
@@ -40,7 +40,7 @@ The shared structure: the attacker does not need to compromise the backend direc
 
 Indirect prompt injection increasingly turns the user's own LLM instance into the weapon against the user's own backend. The pattern: an attacker submits text into a trusted-by-the-user location through a low-privilege channel (a public form, a customer ticket, a community pull request) and waits for the user's MCP-connected agent or developer assistant to read that text while operating under the user's elevated credentials. The agent, not the attacker, performs the privileged action (see Common Example #3; Scenario #9 walks through the production proof-of-concepts).
 
-### Common Examples of Risk
+### リスクのよくある例
 
 1. **Direct prompt-input override**: a user message overrides the system prompt's role and capability limits, making the model disclose, generate, or act outside its intended scope. Intentional and unintentional inputs both count.
 
@@ -60,7 +60,7 @@ Indirect prompt injection increasingly turns the user's own LLM instance into th
 
 ---
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 Prompt injection is intrinsic to current generative AI: LLMs make no architectural distinction between instructions and data, and their behavior is stochastic, so no reliable prevention mechanism exists today, a position consistent with NIST (2025), NCSC (2025), and Debenedetti et al. (2025). Defense is therefore architectural rather than interceptive. Design the surrounding system on the explicit assumption that the model's instruction boundary will eventually be bypassed, and constrain what the model is permitted to do, and what its outputs are permitted to reach, so a successful injection does not translate into a successful exploit.
 
@@ -92,49 +92,49 @@ Apply the controls below as defense-in-depth, since no single control is suffici
 
 ---
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1: Direct Injection
+#### シナリオ #1: 直接インジェクション
 
 An attacker prompts a customer-support chatbot to ignore its guidelines, query private data stores, and send emails, leading to unauthorized access and privilege escalation.
 **Anatomy:** (a) direct user input, (b) single-shot, (c) plain text
 
-#### Scenario #2: Indirect Injection via Retrieved Web Content
+#### シナリオ #2: 取得したウェブコンテンツを介した間接インジェクション
 
 A user asks an assistant to summarize a web page containing hidden instructions. The model inserts a markdown image whose URL exfiltrates the private conversation to an attacker-controlled domain. The user sees only the rendered image, never the instruction.
 **Anatomy:** (a) retrieved web content (indirect), (b) single-shot with image-URL exfiltration, (c) plain text hidden in page source
 
-#### Scenario #3: Unintentional Injection
+#### シナリオ #3: 意図しないインジェクション
 
 A job-description PDF embeds an AI-detection instruction. An applicant unknowingly uses an LLM to optimize their resume against it, the model surfaces the instruction, and the recruiting system flags the candidate, a prompt injection with neither party acting maliciously.
 **Anatomy:** (a) indirect (document / PDF), (b) single-shot, (c) plain text
 
-#### Scenario #4: RAG Repository Poisoning
+#### シナリオ #4: RAG リポジトリポイズニング
 
 An attacker contributes poisoned documents to a corpus the application retrieves over. A matching query returns the modified content, and its instructions alter the output. As few as five poisoned documents have reached roughly 90% attack success against a knowledge base of millions of texts (W. Zou et al., 2025).
 **Anatomy:** (a) retrieved content (RAG corpus), (b) cross-session / cross-user, (c) plain text
 
-#### Scenario #5: Payload Splitting
+#### シナリオ #5: ペイロード分割
 
 An attacker splits malicious instructions across multiple resume fields (header, body, attachment) so no single field looks malicious to a per-field classifier. The LLM recombines them at evaluation, and its recommendation is manipulated.
 **Anatomy:** (a) direct user input split across fields, (b) single-shot recombined at evaluation, (c) plain text fragmented
 
-#### Scenario #6: Multimodal Steganographic Injection
+#### シナリオ #6: マルチモーダルのステガノグラフィックインジェクション
 
 An attacker embeds an instruction in an image below the human visual threshold. A multimodal model's vision encoder extracts the payload, behavior changes, and the model produces harmful output or an unauthorized tool invocation. This was demonstrated against four frontier vision-language models in oncology imaging (Clusmann et al., 2025) and against general-purpose models via combined visual perturbation and text steering (R. Chen et al., 2025).
 **Anatomy:** (a) image input (indirect / multimodal), (b) single-shot, (c) steganographic / pixel-level encoding
 
-#### Scenario #7: Zero-Click Document-Borne Agentic Exfiltration
+#### シナリオ #7: ゼロクリック文書媒介型エージェント窃取
 
 A crafted email triggers an LLM-powered productivity assistant to exfiltrate organizational data with no user interaction. Aim Security demonstrated this against Microsoft 365 Copilot (Reddy & Gujral, 2025), bypassing both the deployed prompt-injection classifier and the link-redaction filter.
 **Anatomy:** (a) email / document (indirect), (b) single-shot with tool invocation, (c) plain text with invisible-Unicode exfiltration channel
 
-#### Scenario #8: Agentic Destructive Command Execution
+#### シナリオ #8: エージェントによる破壊的コマンド実行
 
 Two July 2025 events show the same class of impact via different vectors. An attacker committed a destructive system prompt to the Amazon Q VS Code extension repository before AWS reverted it, though the committed code failed to execute due to a syntax error (Amazon Web Services, 2025a). Separately, a runtime injection caused Amazon Q to execute arbitrary code (Amazon Web Services, 2025b). An agent with shell, file-system, or cloud-API access amplifies an injection into a host-impacting incident.
 **Anatomy:** (a) supply-chain / compromised system prompt, or runtime indirect injection, (b) persistent cross-session, or single-shot with shell tool execution, (c) plain text
 
-#### Scenario #9: Trusted-Backend Indirect Injection through MCP
+#### シナリオ #9: Trusted-Backend Indirect Injection through MCP
 
 An attacker plants text in a low-privilege channel (a public GitHub issue, a support ticket, or a malicious npm package), and the developer's LLM reads it under elevated credentials. Invariant Labs (2025) exfiltrated private repositories via a poisoned GitHub issue, General Analysis (2025) dumped a production database through Cursor's Supabase MCP server running `service_role` and bypassing row-level security, and the malicious `postmark-mcp` package (Koi Security, 2025; Toulas, 2025) BCC'd email to an attacker across an estimated 300 organizations.
 **Anatomy:** (a) trusted-surface indirect (MCP channel: issue, ticket, npm package), (b) multi-step tool-chain, (c) plain text

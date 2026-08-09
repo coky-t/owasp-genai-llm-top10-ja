@@ -1,6 +1,6 @@
-## LLM04:2026 Supply Chain
+## LLM04:2026 サプライチェーン (Supply Chain)
 
-### Description
+### 説明
 
 LLM supply chains are susceptible to vulnerabilities that affect the integrity of training data, models, adapters, conversion pipelines, and deployment platforms, resulting in biased outputs, security breaches, or system failures. While traditional software vulnerabilities focus on code flaws and dependencies, in ML the risks extend to third-party pre-trained models, datasets, and model artifacts, which can be manipulated through tampering, poisoning, or malicious artifact replacement.
 
@@ -9,7 +9,7 @@ Creating LLMs is specialized work that depends on third-party models, datasets, 
 Some of the risks covered here are also discussed in LLM05:2026 Data and Model Poisoning. This entry focuses on their supply-chain aspect. Supply-chain risks specific to agentic applications, including MCP servers and tool registries, are covered by ASI04 Agentic Supply Chain Vulnerabilities in the OWASP Top 10 for Agentic Applications (OWASP GenAI Security Project, 2026), and MITRE ATLAS catalogs the corresponding adversary techniques under AML.T0010 AI Supply Chain Compromise (MITRE, n.d.).
 A [simple LLM supply-chain threat model](report/images/LLM%20Supply%20Chain%20Threat%20Model.png) illustrates these surfaces.
 
-### Common Examples of Risk
+### リスクのよくある例
 
 #### 1. Vulnerable or Outdated Third-Party Components and Models
 
@@ -39,7 +39,7 @@ LLMs shipped on devices add compromised manufacturing processes, exploitation of
 
 Unclear terms and conditions (T&Cs) and data privacy policies of model operators can lead to sensitive application data being used for model training and subsequent exposure, and may create copyright risk from material provided by the model supplier.
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 1. Carefully vet data sources and suppliers, including T&Cs and privacy policies, and only use trusted suppliers. Regularly review and audit supplier security and access, and re-assess on changes in their security posture or T&Cs.
 2. Apply the mitigations in the OWASP Top Ten's [A06:2021 Vulnerable and Outdated Components](https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/): vulnerability scanning, management, and a patching policy that keeps the application on maintained versions of components, APIs, and underlying models. Apply the same controls to development environments with access to sensitive data, and verify that AI-suggested dependencies exist and are the intended package before adopting them.
@@ -49,36 +49,36 @@ Unclear terms and conditions (T&Cs) and data privacy policies of model operators
 6. Strictly monitor and audit collaborative model development environments, and treat model conversion and merge services as high-risk promotion points.
 7. Encrypt models deployed at the edge with integrity checks, use vendor attestation APIs to prevent tampered apps and models, and reject unrecognized firmware and untrusted device states.
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1: Compromised Packages and Serving Frameworks
+#### シナリオ #1: Compromised Packages and Serving Frameworks
 
 A compromised dependency reaches a model development or inference environment, as in the December 2022 PyTorch supply-chain attack, where a malicious `torchtriton` package on the PyPI registry shadowed the legitimate PyTorch-nightly dependency and exfiltrated data (PyTorch Foundation, 2022). The serving stack is part of the same attack surface: the ShadowRay attacks exploited the disputed CVE-2023-48022 (unauthenticated dashboards on production Ray servers) in the wild, later escalating into a self-propagating botnet across exposed clusters (Lumelsky & Elbaz, 2025), and in Ollama, CVE-2024-37032 allowed remote code execution through a malicious model manifest pulled from a registry (Wiz, 2024).
 
-#### Scenario #2: Tampered Model Published to a Hub
+#### シナリオ #2: Tampered Model Published to a Hub
 
 An attacker publishes a tampered model under a trusted-looking name, as demonstrated by the PoisonGPT proof-of-concept, in which a model with surgically modified parameters spread misinformation while evading detection by standard benchmark evaluation (Huynh & Hardouin, 2023). The same trust gap covers attacker fine-tunes that strip a popular model's safety features while preserving its performance on benign tasks (Zhan et al., 2023), any pre-trained model deployed without verification, and shared AI-as-a-service platforms, where researchers escaped an inference container via a malicious model to reach other customers' models and data (Tamari & Tzadik, 2024).
 
-#### Scenario #3: Compromised Supplier LoRA Adapter
+#### シナリオ #3: Compromised Supplier LoRA Adapter
 
 An attacker infiltrates a third-party supplier and subtly alters a LoRA adapter that is later merged into a deployed LLM through a model-merge workflow. Once merged, the adapter provides a covert entry point into the system.
 
-#### Scenario #4: Hijacked Model Conversion or Merge Service
+#### シナリオ #4: Hijacked Model Conversion or Merge Service
 
 An attacker stages an attack through a model merge or format conversion service to compromise a publicly available model and inject malicious behavior, as shown by HiddenLayer's research on hijacking the Safetensors conversion bot on Hugging Face (HiddenLayer, 2024).
 
-#### Scenario #5: Model Namespace Reuse
+#### シナリオ #5: Model Namespace Reuse
 
 An organization deploys a model from a public hub by referencing it solely by its `Author/ModelName` identifier. The original author deletes or transfers the account, freeing the namespace, and an attacker re-registers the same name and publishes a malicious model under the original path. Pipelines and managed model catalogs that resolve the model by name alone then pull the attacker's model, leading to remote code execution (Saraf & Balassiano, 2025).
 
-#### Scenario #6: Scanner, Safe-Loader, and Safe-Format Bypass
+#### シナリオ #6: Scanner, Safe-Loader, and Safe-Format Bypass
 
 An organization gates third-party models behind a malware scanner and a loader option documented as safe against code execution. An attacker defeats both. Corrupted or compression-wrapped pickle streams execute their payload before the scanner reaches the broken byte, as in the nullifAI models found on Hugging Face (Zanki, 2025). Model scanners and safe-loader flags have had bypasses assigned CVEs, such as the PickleScan zero-days (Cohen, 2025) and `torch.load` with `weights_only` (CVE-2025-32434) (GitHub Security Advisories, 2025). A ShadowLogic-style backdoor in the computational graph (Wickens et al., 2024) of a "safe" format like ONNX attaches no executable code for a serialization scanner to flag. Treat scanners and safe-loader flags as defense-in-depth layers rather than guarantees, alongside provenance verification and patched loaders and parsers.
 
-#### Scenario #7: Compromised Build Pipeline for Model Artifacts
+#### シナリオ #7: Compromised Build Pipeline for Model Artifacts
 
 An attacker compromises the CI/CD pipeline an organization uses to fine-tune and publish models, through a malicious build-workflow dependency, a stolen artifact-registry credential, or cache poisoning, as in the Ultralytics attack, where GitHub Actions cache injection published trojanized PyPI releases of a flagship AI library (Python Package Index, 2024), including a compromised "fix" release. This is the same build-time substitution seen in classical incidents such as the xz-utils backdoor and the Codecov breach. Because the backdoored artifact is built and signed by the organization's own release infrastructure, it passes downstream provenance checks, internal attestation, and supply-chain scanners that only flag externally sourced components.
 
-#### Scenario #8: Reverse-Engineered Mobile App
+#### シナリオ #8: Reverse-Engineered Mobile App
 
 An attacker reverse-engineers a mobile app to replace the on-device model with a tampered version that leads users to scam sites, distributing the re-packaged app through social engineering.

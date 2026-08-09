@@ -1,6 +1,6 @@
-## LLM03:2026 Excessive Agency
+## LLM03:2026 過剰なエージェンシー (Excessive Agency)
 
-### Description
+### 説明
 
 An LLM-based system is often granted a degree of agency by its developer: the ability to call functions or interface with other systems via tools (also called extensions, plugins, or skills by different vendors) to undertake actions in response to a prompt. An LLM agent may also select which tool to invoke dynamically, based on the input prompt or prior LLM output. Agent-based systems will typically make repeated calls to an LLM using output from previous invocations to ground and direct subsequent invocations.
 
@@ -19,7 +19,7 @@ Excessive Agency can lead to a broad range of impacts across the confidentiality
 
 Note: Excessive Agency differs from Improper Output Handling which is concerned with insufficient scrutiny of LLM outputs. Sanitization of model inputs and outputs is not a root control for Excessive Agency and is covered by LLM01:2026 Prompt Injection for inputs and LLM10:2026 Improper Output Handling for outputs.
 
-### Common Examples of Risk
+### リスクのよくある例
 
 #### 1. Excessive Functionality
 
@@ -45,7 +45,7 @@ Note: Excessive Agency differs from Improper Output Handling which is concerned 
 
   An LLM-based application or tool fails to independently verify and approve high-impact actions. E.g., a tool that allows a user's documents to be deleted performs deletions without any confirmation from the user.
 
-### Prevention and Mitigation Strategies
+### 予防と緩和の方策
 
 The following actions can prevent Excessive Agency:
 
@@ -87,9 +87,9 @@ The following options will not prevent Excessive Agency but can limit the level 
 
   Establish thresholds around the invocation of tools and implement circuit breakers that halt, rate-limit or escalate for human review if those thresholds are exceeded. Simple thresholds could be based on the number of invocations, whereas context-aware thresholds could be based on the cumulative value of an input parameter to a tool.
 
-### Example Attack Scenarios
+### 攻撃シナリオの例
 
-#### Scenario #1: Hijacked Email Assistant
+#### シナリオ #1: Hijacked Email Assistant
 
 An LLM-based personal assistant app is granted access to an individual's mailbox via a tool in order to summarize the content of incoming emails. To achieve this functionality, the tool requires the ability to read messages, but the tool the system developer has chosen to use also contains functions for sending messages. The app is also vulnerable to an indirect prompt injection attack, whereby a maliciously-crafted incoming email tricks the LLM into commanding the agent to scan the user's inbox for sensitive information and forward it to the attacker's email address. This could be avoided by:
 
