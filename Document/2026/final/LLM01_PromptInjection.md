@@ -2,21 +2,21 @@
 
 ### 説明
 
-A **prompt-injection vulnerability** occurs when input to a large language model (LLM), whether direct user input, retrieved content, tool output, image, audio, or video content, intermediate reasoning, or persistent memory, alters the model's behavior in ways the application developer did not intend. LLMs make no architectural distinction between "instructions" and "data" (both are tokens on the same stream), so there is no clean equivalent to parameterized queries (NCSC, 2025). Inputs need not be human-readable, need not arrive directly from a user, and need not be visible in the rendered interface to influence the model.
+**プロンプトインジェクションの脆弱性** は、大規模言語モデル (LLM) への入力 (直接ユーザー入力、取得されたコンテンツ、ツール出力、画像、音声、動画コンテンツ、中間的な推論、永続メモリなど) が、アプリケーション開発者が意図しない方法でモデルの挙動を改変する場合に発生します。LLM は「命令」と「データ」をアーキテクチャ上の区別がない (どちらも同一ストリーム上のトークンである) ため、パラメータ化クエリに相当するような明確なものはありません (NCSC, 2025)。モデルに影響を与える入力は、人間が読める必要はなく、ユーザーから直接届く必要はなく、描画されたインタフェースで視認できる必要はありません。
 
-Prompt-injection vulnerabilities exist in how models process input and how that input can force the model to pass data or instructions incorrectly to other parts of the system. Three deployment-time properties make this worse. First, **context-window pooling**: the model treats system prompt, user input, retrieved documents, tool outputs, conversation history, and memory as a single token stream, with no enforced trust boundary. Second, **memory persistence**: an injection that writes to long-term memory, a RAG corpus, a vector store, or a hosted memory service taints every subsequent session that reads from that store. Third, **agentic execution**: when the model's output drives tool calls (file system, shell, email, cloud APIs, MCP servers, sub-agents), the blast radius extends from the chat surface to whatever the agent's tools can reach, and tool outputs re-enter the context window, enabling chained or self-replicating effects.
+プロンプトインジェクションの脆弱性は、モデルが入力を処理する方法や、その入力が、システムの他の部分へ不適切にデータや命令を渡すように、モデルを強制できる方法に存在します。デプロイメント時の三つの特性がこれを悪化します。第一、**コンテキストウィンドウのプーリング**: モデルは、システムプロンプト、ユーザー入力、検索されたドキュメント、ツール出力、会話履歴、メモリを単一のトークンストリームとして、信頼境界の強制なしに扱います。第二、**メモリの永続性**: 長期メモリ、RAG コーパス、ベクトルストア、あるいはホスト型メモリサービスに書き込まれるインジェクションは、それらのストアから読み取る後続のすべてのセッションを汚染します。第三、**自律型実行**: モデルの出力がツール呼び出し (ファイルシステム、シェル、電子メール、クラウド API、MCP サーバー、サブエージェント) を駆動する場合、爆風半径はチャット画面からエージェントのツールが到達できるところまでに拡大し、ツール出力はコンテキストウィンドウに再入力し、連鎖的あるいは自己複製的な影響を生じる可能性があります。
 
-A prompt-injection anatomy can be characterized along three axes. **Delivery surface** is how it reaches the model (direct input, retrieved content, tool output, tool connection channel, or persistent memory). **Propagation behavior** is how it spreads across time and boundaries (single-shot, multi-step kill-chain, cross-session through memory or RAG, or self-replicating across agents). **Encoding** is how the malicious instructions are represented in tokens or pixels (plain text, base64 or other obfuscation, invisible Unicode, multimodal or steganographic, low-resource language). Decomposing a scenario along these axes is a useful threat-modeling step before selecting which mitigations apply.
+プロンプトインジェクションの構造は三つの軸で特徴付けできます。**配信経路 (Delivery surface)** は、それがモデルに到達する方法 (直接入力、取得されたコンテンツ、ツール出力、ツール接続チャネル、永続メモリ) です。**伝播挙動 (Propagation behavior)** は、それが時間や境界を越えて拡散する方法 (単一ショット、多段階キルチェーン、メモリや RAG を通じたクロスセッション、エージェント間の自己複製) です。**エンコーディング (Encoding)** は、悪意のある指示がトークンやピクセルを表現する方法 (プレーンテキスト、Base64 やそのたの難読化、不可視の Unicode、マルチモーダルやステガノグラフィック、低リソース言語) です。どの緩和策を適用するかを選択する前の脅威モデリングの段階で、これらの軸に沿ってシナリオを分解することは有益です。
 
-The severity and nature of a successful prompt injection vary with the business context the model operates in and the agency with which it is architected. Prompt injection can lead to outcomes that include but are not limited to:
+プロンプトインジェクション成功の深刻度や性質は、モデル運用のビジネス上の文脈や、それが組み込まれたエージェンシーによって異なります。プロンプトインジェクションは以下を含む事態を招く可能性がありますが、それに限定されません。
 
-* Disclosure of sensitive information, system-prompt content, retrieved private documents, or infrastructure details.
-* Manipulation of model output to produce biased, harmful, or attacker-chosen content that downstream systems or users act on.
-* Unauthorized invocation of tools the agent is permitted to call, escalating to arbitrary command execution and destructive actions where the agent has shell, file-system, or cloud-API access.
-* Data exfiltration via image-URL channels, hidden Unicode characters in rendered output, or covert tool-logging side channels.
-* Persistent compromise of agent behavior across sessions through memory or RAG corpus poisoning.
+* 機密情報、システムプロンプトの内容、取得されたプライベート文書、インフラストラクチャの詳細を開示します。
+* モデル出力を操作して、偏った内容、有害な内容、あるいは攻撃者が意図した内容を生成し、ダウンストリームシステムやユーザーに影響を及ぼします。
+* エージェントが呼び出しを許可されているツールの不正に呼び出して、エージェントがシェル、ファイルシステム、またはクラウド API へのアクセスを持つ場合に任意のコマンド実行や破壊的なアクションにエスカレートします。
+* 画像 URL チャネル、描画された出力の隠し Unicode 文字、あるいはツールのログ記録での隠しサイドチャネルを介してデータ流出します。
+* メモリや RAG コーパスポイズニングを通じてセッションをまたぐエージェント動作を永続的に侵害します。
 
-*Note: prompt injection differs from LLM02:2026 Sensitive Information Disclosure, which addresses what the model leaks through its outputs, including reasoning-channel content, and from LLM03:2026 Excessive Agency, which addresses the consequences of model output reaching privileged actions. This entry concerns the input boundary itself. Sanitization and validation of model outputs before they reach downstream components is covered by LLM10:2026 Improper Output Handling.*
+*注: プロンプトインジェクションは、推論チャネルの内容を含め、モデルがその出力を通じて漏洩するものを扱う、LLM02:2026 機密情報の開示 (Sensitive Information Disclosure) や、特権アクションに到達するモデル出力の結果を扱う、LLM03:2026 過剰なエージェンシー (Excessive Agency) とは異なります。このエントリは入力境界自体に関心を寄せています。モデル出力がダウンストリームコンポーネントに到達する前のサニタイゼーションとバリデーションは LLM10:2026 不適切な出力処理 (Improper Output Handling) でカバーしています。*
 
 ---
 
