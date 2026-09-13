@@ -24,9 +24,9 @@
 
 #### 直接プロンプトインジェクション
 
-A user, or an attacker with the user's access path, supplies input that changes model behavior in undesired ways. Direct injection can be **intentional** (a malicious user crafting a jailbreak) or **unintentional** (a legitimate user pasting content that happens to contain conflicting instructions, or a user who relies on an LLM to help them and inadvertently optimizes their input against an unrelated downstream LLM, as in Scenario #3).
+ユーザー、あるいはそのユーザーのアクセス経路を利用する攻撃者は、モデルの挙動を望ましくない方法で変更する入力を与えます。直接プロンプトインジェクションには **意図的なもの** (悪意のあるユーザーが脱獄を仕掛ける) あるいは **意図しないもの** (正当なユーザーがたまたま競合する指示を含むコンテンツを貼り付けたり、LLM の支援に依存するユーザーが無関係なダウンストリーム LLM に対して入力を意図せず最適化する (シナリオ #3)) があります。
 
-Jailbreaking is the subset of prompt injection where the attacker's goal is to make the model violate its safety protocols. Application-level safeguards help contain it, but effective prevention requires ongoing updates to the model's training and safety mechanisms.
+脱獄はプロンプトインジェクションの一種であり、攻撃者の目的はモデルをその安全性プロトコルに違反することです。アプリケーションレベルのセーフガードはそれを含むのに役立ちますが、効果的な防止にはモデルのトレーニングと安全性メカニズムを継続的に更新する必要があります。
 
 #### 間接プロンプトインジェクション
 
