@@ -30,15 +30,15 @@
 
 #### 間接プロンプトインジェクション
 
-The model ingests content from an external source (a web page, a document, an email, a tool response, a retrieved RAG passage, an image, an MCP server's output, a database row, or an issue title) that contains data which acts as prompt injection. The user did not supply or see those instructions. The trust profile of the delivery surface determines what defenses are practical:
+モデルは、プロンプトインジェクションとして機能するデータを含む外部ソース (ウェブページ、ドキュメント、電子メール、ツールレスポンス、取得した RAG パッセージ、画像、MCP サーバーの出力、データベース行、課題のタイトル) からコンテンツを取り込みます。ユーザーはそれらの指示を供給しておらず、目にもしていません。配信サーフェスの信頼性プロファイルはどのような防御が現実的かを決定します。
 
-* **Untrusted surfaces.** Public web pages, emails from unknown senders, search results. Defenders must treat anything from these sources as suspicious. Most prompt-injection research has focused here.
-* **Semi-trusted surfaces.** Issue titles in a public bug tracker, package READMEs and changelogs, third-party API responses: content the user chose to retrieve but did not author. The user trusts the platform but not necessarily individual contributors.
-* **Trusted surfaces.** The developer's own repositories, databases, internal documents, and mail. The developer may not realize an attacker has placed content here, perhaps via an unrelated upstream vector such as a public bug-report form.
+* **信頼できないサーフェス。** パブリックウェブページ、未知の送信者からの電子メール、検索結果。防御側はこれらのソースからのあらゆるものを疑わしいものとして扱う必要があります。ほとんどのプロンプトインジェクション研究はここに焦点を当ててきました。
+* **部分的に信頼できるサーフェス。** パブリックバグトラッカー上の課題タイトル、パッケージ README と変更履歴、サードパーティ API レスポンス。ユーザーが取得することを選択しましたが、ユーザーが作成したわけではないコンテンツです。ユーザーはプラットフォームを信頼していますが、必ずしも個々の貢献者を信頼してはいません。
+* **信頼できるサーフェス。** 開発者自身のリポジトリ、データベース、内部ドキュメント、メール。開発者は、攻撃者が、公開バグレポートフォームなどの無関係なアップストリームの経路を介して、ここにコンテンツを配置したことに気付かない可能性があります。
 
-The shared structure: the attacker does not need to compromise the backend directly. They place text where the developer's LLM will read it, and the LLM, operating with the developer's privileges, does the work. Defenses that focus only on the chat surface miss this entirely.
+共通する構造: 攻撃者がバックエンドを直接侵害する必要がありません。攻撃者は開発者の LLM が読み取る場所にテキストを配置します。そして、開発者の権限で動作するその LLM がその処理を実行してしまいます。チャットのサーフェスのみに焦点を当てる防御では、もっぱらこれを見落としてしまいます。
 
-Indirect prompt injection increasingly turns the user's own LLM instance into the weapon against the user's own backend. The pattern: an attacker submits text into a trusted-by-the-user location through a low-privilege channel (a public form, a customer ticket, a community pull request) and waits for the user's MCP-connected agent or developer assistant to read that text while operating under the user's elevated credentials. The agent, not the attacker, performs the privileged action (see Common Example #3; Scenario #9 walks through the production proof-of-concepts).
+間接プロンプトインジェクションは、ユーザー自身の LLM インスタンスを、ユーザー自身のバックエンドに対する武器に次第に変えてしまいます。パターン: 攻撃者は、低権限チャネル (公開フォーム、カスタマーチケット、コミュニティへのプルリクエスト) を通じて、ユーザーが信頼する場所にテキストを送信します。そして、ユーザーの昇格したクレデンシャルで動作している際に、ユーザーの MCP 接続型のエージェントや開発者支援がそのテキストを読み込むのを待ちます。攻撃者ではなく、エージェントが権限を要するアクションを実行します (よくある例 #3 を参照してください。また、シナリオ #9 では本番環境の概念実証について説明しています)。
 
 ### リスクのよくある例
 
