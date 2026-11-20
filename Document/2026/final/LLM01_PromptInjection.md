@@ -42,21 +42,21 @@
 
 ### リスクのよくある例
 
-1. **Direct prompt-input override**: a user message overrides the system prompt's role and capability limits, making the model disclose, generate, or act outside its intended scope. Intentional and unintentional inputs both count.
+1. **直接的なプロンプト入力による上書き**: ユーザーメッセージはシステムプロンプトのロールや機能の制限を上書きし、モデルの意図されたスコープ外への開示、生成、動作を行わせます。意図的な入力と意図しない入力の双方を含みます。
 
-2. **Indirect injection through retrieved content**: attacker instructions ride in a RAG passage, web page, document, or email and run when the content reaches the context window (for example, EmailGPT; INCIBE-CERT, 2024).
+2. **取得したコンテンツを通じた間接的なインジェクション**: 攻撃者の指示が RAG パッセージ、ウェブページ、ドキュメント、電子メールに紛れ込み、そのコンテンツがコンテキストウィンドウに到達した際に実行します (例: EmailGPT; INCIBE-CERT, 2024)。
 
-3. **Trusted-surface indirect injection**: text planted in a low-privilege but trusted channel (issue tracker, feedback form, support ticket) makes the user's LLM act under its own elevated credentials, exfiltrating repositories, dumping databases, or modifying IDE config, actions the attacker could not perform directly (Invariant Labs, 2025; General Analysis, 2025; Rehberger, 2025a).
+3. **信頼できるサーフェスによる間接的なインジェクション**: 低権限だが信頼できるチャネル (課題トラッカー、フィードバックフォーム、サポートチケット) に仕掛けられたテキストは、ユーザーの LLM をそのユーザー自身の高い権限のクレデンシャルの下で動作させ、リポジトリの窃取、データベースのダンプ、IDE 設定の変更といった、攻撃者が直接実行できないアクションを可能になります (Invariant Labs, 2025; General Analysis, 2025; Rehberger, 2025a)。
 
-4. **Multimodal and steganographic injection**: sub-perceptual perturbations in images, audio, or video are extracted by the encoder (Clusmann et al., 2025; see Scenario #6).
+4. **マルチモーダルおよびステガノグラフィックのインジェクション**: 画像、音声、動画内の知覚不可能な摂動がエンコーダによって抽出されます (Clusmann ほか, 2025; シナリオ #6 を参照)。
 
-5. **Invisible-character injection and exfiltration**: tag-block, variation-selector, and zero-width Unicode carry instructions or exfiltrate bytes inside benign-looking text. The August 2024 M365 Copilot ASCII-smuggling proof of concept exfiltrated a Slack MFA code (Rehberger, 2024).
+5. **不可視文字インジェクションと抽出**: タグブロック、バリエーションセレクタ、ゼロ幅 Unicode は、無害に見えるテキスト内に命令を持ち込んだり、バイトを抽出できます。2024 年 8 月の M365 Copilot での ASCII スマグリングの概念実証では Slack の MFA コードを抽出しました (Rehberger, 2024)。
 
-6. **Cross-session memory and RAG corpus poisoning**: one tainted entry in persistent memory or a RAG corpus reaches every future session that reads it (W. Zou et al., 2025; see Scenario #4).
+6. **クロスセッションメモリおよび RAG コーパスポイズニング**: 永続メモリや RAG コーパス内のひとつの汚染されたエントリは、それを読み取る将来のすべてのセッションに到達します (W. Zou ほか, 2025; シナリオ #4 を参照)。
 
-7. **Fine-tuning interface as gradient oracle ("fun-tuning")**: an attacker reads per-example loss from a vendor's fine-tuning API to optimize a payload (65% to 82% attack success on Gemini), bringing white-box-style optimization to closed-weight models (Labunets et al., 2025).
+7. **勾配オラクルとしてのファインチューニングインタフェース ("fun-tuning")**: 攻撃者は、ベンダーのファインチューニング API からサンプルごとの損失を読み取り、ペイロードを最適化します (Gemini での攻撃成功は 65% から 82%)。クローズドウェイトモデルに対してホワイトボックススタイルの最適化をもたらします (Labunets ほか, 2025)。
 
-8. **Multilingual, encoded, or low-resource-language payloads**: low-resource and code-mixed inputs raise attack success and evade classifiers not trained on the scheme, and Base64, ROT13, or emoji encodings bypass filters that never saw the encoding (Hackett et al., 2025).
+8. **多言語、エンコード済み、または低リソース言語のペイロード**: 低リソースやコードミックスの入力は攻撃成功を高め、そのスキームで訓練していない分析器をすり抜けます。Base64、ROT13、あるいは絵文字でのエンコーディングは、そのエンコーディングを認識できないフィルタをバイパスします (Hackett ほか, 2025)。
 
 ---
 
